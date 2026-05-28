@@ -22,7 +22,9 @@ model Customer {
   company   String         @db.VarChar(255)
   status    CustomerStatus @default(active)
   createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
   notes     Note[]
+  tickets   Ticket[]
 
   @@map("customers")
 }
@@ -33,15 +35,34 @@ model Note {
   text       String   @db.Text
   author     String   @db.VarChar(255)
   createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
+  @@index([customerId])
   @@map("notes")
 }
 
+model Ticket {
+  id         String       @id @db.VarChar(50)
+  customerId String       @map("customer_id") @db.VarChar(50)
+  subject    String       @db.VarChar(255)
+  description String?     @db.Text
+  statusId   String       @map("status_id") @db.VarChar(50)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  customer   Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  status     TicketStatus @relation(fields: [statusId], references: [id])
+
+  @@index([customerId])
+  @@index([statusId])
+  @@map("tickets")
+}
+
 model TicketStatus {
-  id    String @id @db.VarChar(50)
-  name  String @db.VarChar(100)
-  color String @db.VarChar(50)
+  id      String   @id @db.VarChar(50)
+  name    String   @db.VarChar(100)
+  color   String   @db.VarChar(50)
+  tickets Ticket[]
 
   @@map("ticket_statuses")
 }

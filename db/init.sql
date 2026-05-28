@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS customers (
   email       VARCHAR(255)                         NOT NULL,
   company     VARCHAR(255)                         NOT NULL,
   status      ENUM('active', 'lead', 'inactive')   NOT NULL DEFAULT 'active',
-  created_at  TIMESTAMP                            NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at  TIMESTAMP                            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TIMESTAMP                            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS notes (
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS notes (
   text         TEXT          NOT NULL,
   author       VARCHAR(255)  NOT NULL,
   created_at   TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at   TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
 );
 
@@ -25,6 +27,18 @@ CREATE TABLE IF NOT EXISTS ticket_statuses (
   id     VARCHAR(50)   NOT NULL PRIMARY KEY,
   name   VARCHAR(100)  NOT NULL,
   color  VARCHAR(50)   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS tickets (
+  id           VARCHAR(50)   NOT NULL PRIMARY KEY,
+  customer_id  VARCHAR(50)   NOT NULL,
+  subject      VARCHAR(255)  NOT NULL,
+  description  TEXT,
+  status_id    VARCHAR(50)   NOT NULL,
+  created_at   TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at   TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+  FOREIGN KEY (status_id) REFERENCES ticket_statuses(id)
 );
 
 -- Seed customers
@@ -46,4 +60,10 @@ INSERT INTO ticket_statuses (id, name, color) VALUES
   ('status_3', 'Waiting on Customer', 'orange'),
   ('status_4', 'Resolved',            'green'),
   ('status_5', 'Closed',              'gray');
+
+-- Seed tickets
+INSERT INTO tickets (id, customer_id, subject, description, status_id, created_at) VALUES
+  ('ticket_001', 'cust_001', 'Login issue', 'Cannot login to dashboard', 'status_1', '2025-05-15 10:00:00'),
+  ('ticket_002', 'cust_001', 'Feature request', 'Add export to CSV', 'status_2', '2025-05-16 11:30:00'),
+  ('ticket_003', 'cust_002', 'Billing question', 'Invoice discrepancy', 'status_3', '2025-05-14 09:15:00');
 

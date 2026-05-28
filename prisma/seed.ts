@@ -6,6 +6,7 @@ async function main() {
   console.log("Seeding database...");
 
   await prisma.customer.createMany({
+    skipDuplicates: true,
     data: [
       {
         id: "cust_001",
@@ -35,6 +36,7 @@ async function main() {
   });
 
   await prisma.note.createMany({
+    skipDuplicates: true,
     data: [
       {
         id: "note_001",
@@ -61,12 +63,43 @@ async function main() {
   });
 
   await prisma.ticketStatus.createMany({
+    skipDuplicates: true,
     data: [
       { id: "status_1", name: "Open", color: "blue" },
       { id: "status_2", name: "In Progress", color: "yellow" },
       { id: "status_3", name: "Waiting on Customer", color: "orange" },
       { id: "status_4", name: "Resolved", color: "green" },
       { id: "status_5", name: "Closed", color: "gray" },
+    ],
+  });
+
+  await prisma.ticket.createMany({
+    skipDuplicates: true,
+    data: [
+      {
+        id: "ticket_001",
+        customerId: "cust_001",
+        subject: "Login issue",
+        description: "Cannot login to dashboard",
+        statusId: "status_1",
+        createdAt: new Date("2025-05-15 10:00:00"),
+      },
+      {
+        id: "ticket_002",
+        customerId: "cust_001",
+        subject: "Feature request",
+        description: "Add export to CSV",
+        statusId: "status_2",
+        createdAt: new Date("2025-05-16 11:30:00"),
+      },
+      {
+        id: "ticket_003",
+        customerId: "cust_002",
+        subject: "Billing question",
+        description: "Invoice discrepancy",
+        statusId: "status_3",
+        createdAt: new Date("2025-05-14 09:15:00"),
+      },
     ],
   });
 
