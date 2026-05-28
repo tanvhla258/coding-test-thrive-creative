@@ -9,10 +9,11 @@ export const validateRequest = <T>(
   const result = schema.safeParse(data);
 
   if (!result.success) {
-    const errorMessages = result.error.errors.map((err) => err.message).join(", ");
+    const issues = result.error.issues ?? (result.error as any).errors ?? [];
+    const errorMessages = issues.map((err: any) => err.message).join(", ");
 
     console.error("[Validation Error]", {
-      errors: result.error.errors,
+      errors: issues,
       data,
     });
 
@@ -22,7 +23,7 @@ export const validateRequest = <T>(
         {
           success: false,
           error: `Validation failed: ${errorMessages}`,
-          details: result.error.errors,
+          details: issues,
         },
         { status: 400 }
       ),

@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
-import type { TicketStatus } from "@/types";
-import { readData } from "@/lib/db";
+import { prisma } from "@/lib/db";
+import { handleApiError } from "@/lib/api/error-handler";
 
 export async function GET() {
-  const statuses = await readData<TicketStatus[]>("ticket_status.json");
-  return NextResponse.json(statuses);
+  try {
+    const statuses = await prisma.ticketStatus.findMany({
+      select: {
+        id: true,
+        name: true,
+        color: true,
+      },
+    });
+    return NextResponse.json(statuses);
+  } catch (error) {
+    return handleApiError(error);
+  }
 }

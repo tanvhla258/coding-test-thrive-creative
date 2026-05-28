@@ -5,16 +5,20 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/customers?phone=512-555-0187
+  url: {{baseUrl}}/api/customers?phone=415-555-0123
   body: none
   auth: inherit
+}
+
+params:query {
+  phone: 415-555-0123
 }
 
 tests {
   test("should return 200", function() {
     expect(res.status).to.equal(200);
   });
-
+  
   test("should return filtered results", function() {
     expect(res.body).to.be.an("array");
     res.body.forEach(function(customer) {
