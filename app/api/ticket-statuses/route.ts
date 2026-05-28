@@ -11,8 +11,9 @@ export async function GET() {
         color: true,
       },
     });
-    return NextResponse.json(statuses);
+
+    return NextResponse.json({ success: true, data: statuses });
   } catch (error) {
-    return handleApiError(error);
+    return handleApiError(error, `GET /api/ticket-statuses`);
   }
 }
