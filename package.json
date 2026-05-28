@@ -1,0 +1,38 @@
+{
+  "name": "developer-test-exercise",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next dev --hostname 0.0.0.0",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:reset": "prisma migrate reset"
+  },
+  "prisma": {
+    "seed": "node --import tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "6.11.1",
+    "next": "16.2.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
+    "prisma": "6.11.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.22.3",
+    "typescript": "^5"
+  }
+}

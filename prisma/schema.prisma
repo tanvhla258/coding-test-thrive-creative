@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum CustomerStatus {
+  active
+  lead
+  inactive
+}
+
+model Customer {
+  id        String         @id @db.VarChar(50)
+  name      String         @db.VarChar(255)
+  phone     String         @db.VarChar(50)
+  email     String         @db.VarChar(255)
+  company   String         @db.VarChar(255)
+  status    CustomerStatus @default(active)
+  createdAt DateTime       @default(now()) @map("created_at")
+  notes     Note[]
+
+  @@map("customers")
+}
+
+model Note {
+  id         String   @id @db.VarChar(50)
+  customerId String   @map("customer_id") @db.VarChar(50)
+  text       String   @db.Text
+  author     String   @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("notes")
+}
+
+model TicketStatus {
+  id    String @id @db.VarChar(50)
+  name  String @db.VarChar(100)
+  color String @db.VarChar(50)
+
+  @@map("ticket_statuses")
+}

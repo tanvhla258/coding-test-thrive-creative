@@ -1,0 +1,20 @@
+[
+  {
+    "id": "note_006",
+    "text": "James reached out via the website chat. PeakFlow is a 40-person SaaS company. They are hitting rate limits on their current provider and are actively evaluating alternatives.",
+    "createdAt": "2025-03-15T13:00:00Z",
+    "author": "Dana Holt"
+  },
+  {
+    "id": "note_007",
+    "text": "Technical call with James and two engineers. They need a guaranteed 99.9% SLA and want SAML SSO as a hard requirement. Both are available on the enterprise tier.",
+    "createdAt": "2025-03-22T14:30:00Z",
+    "author": "Dana Holt"
+  },
+  {
+    "id": "note_008",
+    "text": "Sent enterprise proposal. James countered on price — asked for 15% discount on annual commit. Looping in sales leadership before responding.",
+    "createdAt": "2025-04-01T09:00:00Z",
+    "author": "Dana Holt"
+  }
+]

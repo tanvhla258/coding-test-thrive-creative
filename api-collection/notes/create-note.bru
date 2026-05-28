@@ -1,0 +1,33 @@
+meta {
+  name: Create Note
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/notes
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "customerId": "cust_001",
+    "text": "Customer called about their order status",
+    "author": "John Doe"
+  }
+}
+
+tests {
+  test("should return 201", function() {
+    expect(res.status).to.equal(201);
+  });
+
+  test("should return created note", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("customerId");
+    expect(res.body).to.have.property("text");
+    expect(res.body).to.have.property("author");
+    expect(res.body).to.have.property("createdAt");
+  });
+}

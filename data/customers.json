@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cust_001",
+    "name": "Tom Bradley",
+    "phone": "512-555-0187",
+    "email": "tom.bradley@velocitygear.com",
+    "company": "Velocity Gear",
+    "status": "active"
+  },
+  {
+    "id": "cust_002",
+    "name": "Emma Walsh",
+    "phone": "213-555-0342",
+    "email": "emma@sunrisedigital.io",
+    "company": "Sunrise Digital",
+    "status": "lead"
+  },
+  {
+    "id": "cust_003",
+    "name": "James Okonkwo",
+    "phone": "718-555-0091",
+    "email": "j.okonkwo@peakflowsystems.com",
+    "company": "PeakFlow Systems",
+    "status": "active"
+  }
+]

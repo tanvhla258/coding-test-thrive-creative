@@ -1,0 +1,10 @@
+[
+  {
+    "id": "tick_003",
+    "title": "Trial Account Access — Slack Integration Broken",
+    "description": "Emma reports that the Slack integration in the trial environment is throwing a 403 on OAuth callback. Their engineering lead confirmed it is on our side.",
+    "statusId": "status_3",
+    "author": "Ray Castillo",
+    "createdAt": "2025-05-07T09:45:00Z"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  { "id": "status_1", "name": "Open", "color": "blue" },
+  { "id": "status_2", "name": "In Progress", "color": "yellow" },
+  { "id": "status_3", "name": "Waiting on Customer", "color": "orange" },
+  { "id": "status_4", "name": "Resolved", "color": "green" },
+  { "id": "status_5", "name": "Closed", "color": "gray" }
+]

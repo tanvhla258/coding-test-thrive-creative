@@ -1,0 +1,24 @@
+meta {
+  name: Filter Customers by Phone
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/customers?phone=512-555-0187
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return filtered results", function() {
+    expect(res.body).to.be.an("array");
+    res.body.forEach(function(customer) {
+      expect(customer.phone).to.include("512");
+    });
+  });
+}

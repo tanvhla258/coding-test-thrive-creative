@@ -1,0 +1,20 @@
+[
+  {
+    "id": "note_001",
+    "text": "Spoke with Tom about renewing their annual contract. He mentioned they are expanding the team by 12 people next quarter and will need additional seats.",
+    "createdAt": "2025-04-03T09:15:00Z",
+    "author": "Dana Holt"
+  },
+  {
+    "id": "note_002",
+    "text": "Tom requested a walkthrough of the new reporting dashboard. Scheduled for Thursday at 2pm. He wants to bring their ops director.",
+    "createdAt": "2025-04-10T14:40:00Z",
+    "author": "Dana Holt"
+  },
+  {
+    "id": "note_003",
+    "text": "Follow-up after demo — Tom is happy with the reporting features. Flagged that bulk export is a blocker for their workflow. Escalated to product.",
+    "createdAt": "2025-04-17T11:00:00Z",
+    "author": "Dana Holt"
+  }
+]

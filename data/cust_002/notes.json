@@ -1,0 +1,14 @@
+[
+  {
+    "id": "note_004",
+    "text": "Initial discovery call with Emma. She leads product at Sunrise Digital. Looking for a CRM that can integrate with their existing Slack and Notion workflow.",
+    "createdAt": "2025-05-01T10:00:00Z",
+    "author": "Ray Castillo"
+  },
+  {
+    "id": "note_005",
+    "text": "Sent over the integration docs and a trial account. Emma responded quickly — very engaged. She wants to loop in their engineering lead before committing.",
+    "createdAt": "2025-05-06T15:20:00Z",
+    "author": "Ray Castillo"
+  }
+]

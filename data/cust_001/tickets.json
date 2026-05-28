@@ -1,0 +1,18 @@
+[
+  {
+    "id": "tick_001",
+    "title": "Bulk Export Not Working",
+    "description": "Customer reports that exporting more than 500 rows via the dashboard silently fails. No error shown. Affects their end-of-month reporting run.",
+    "statusId": "status_2",
+    "author": "Dana Holt",
+    "createdAt": "2025-04-18T08:30:00Z"
+  },
+  {
+    "id": "tick_002",
+    "title": "Add 12 Additional Seats to Account",
+    "description": "Team is growing next quarter. Tom needs 12 new seats added before May 1st. Billing contact is their finance team at billing@velocitygear.com.",
+    "statusId": "status_1",
+    "author": "Dana Holt",
+    "createdAt": "2025-04-20T10:00:00Z"
+  }
+]

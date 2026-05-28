@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tick_004",
+    "title": "SLA Documentation Request",
+    "description": "James needs the official SLA agreement document sent to their legal team before they can proceed with the contract. Contact: legal@peakflowsystems.com.",
+    "statusId": "status_1",
+    "author": "Dana Holt",
+    "createdAt": "2025-03-23T10:00:00Z"
+  },
+  {
+    "id": "tick_005",
+    "title": "SAML SSO Configuration Support",
+    "description": "PeakFlow's engineering team needs help configuring SAML SSO with their Okta tenant. They have the metadata XML ready but need our SP entity ID and ACS URL.",
+    "statusId": "status_2",
+    "author": "Dana Holt",
+    "createdAt": "2025-04-05T11:30:00Z"
+  },
+  {
+    "id": "tick_006",
+    "title": "Pricing Negotiation — 15% Discount Request",
+    "description": "Customer requested a 15% discount on annual enterprise commit. Requires VP approval. Deal size is significant — prioritise response.",
+    "statusId": "status_3",
+    "author": "Dana Holt",
+    "createdAt": "2025-04-02T08:00:00Z"
+  }
+]

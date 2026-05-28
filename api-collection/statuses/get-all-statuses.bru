@@ -1,0 +1,29 @@
+meta {
+  name: Get All Statuses
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/statuses
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return an array", function() {
+    expect(res.body).to.be.an("array");
+  });
+
+  test("should have id, name, and color", function() {
+    res.body.forEach(function(status) {
+      expect(status).to.have.property("id");
+      expect(status).to.have.property("name");
+      expect(status).to.have.property("color");
+    });
+  });
+}
