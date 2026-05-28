@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import type { Customer, Note, Ticket, TicketStatus } from "@/types";
 import CustomerList from "./CustomerList";
 import NotesPane from "./NotesPane";
@@ -52,11 +53,20 @@ export default function CustomerNotesCRM({ initialCustomers, initialStatuses }: 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, author }),
       });
-      if (!res.ok) throw new Error("Failed to add note");
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMessage = errorData.error || `Failed to add note (${res.status})`;
+        toast.error(errorMessage);
+        return;
+      }
+      
       const json = await res.json();
       setNotes((prev) => [json.data, ...prev]);
+      toast.success("Note added successfully");
     } catch (err) {
       console.error("Failed to add note:", err);
+      toast.error("Network error: Failed to add note");
     }
   };
 
@@ -68,11 +78,20 @@ export default function CustomerNotesCRM({ initialCustomers, initialStatuses }: 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subject, description, statusId }),
       });
-      if (!res.ok) throw new Error("Failed to add ticket");
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMessage = errorData.error || `Failed to add ticket (${res.status})`;
+        toast.error(errorMessage);
+        return;
+      }
+      
       const json = await res.json();
       setTickets((prev) => [json.data, ...prev]);
+      toast.success("Ticket created successfully");
     } catch (err) {
       console.error("Failed to add ticket:", err);
+      toast.error("Network error: Failed to add ticket");
     }
   };
 

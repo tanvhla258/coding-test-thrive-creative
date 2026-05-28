@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import type { Customer, Note } from "@/types";
 import Modal from "./Modal";
 
@@ -72,7 +73,14 @@ export default function NotesPane({ customer, notes, onAddNote }: Props) {
               </button>
               <button
                 onClick={async () => {
-                  if (!text.trim()) return;
+                  if (!text.trim()) {
+                    toast.warning("Note text is required");
+                    return;
+                  }
+                  if (!author.trim()) {
+                    toast.warning("Author is required");
+                    return;
+                  }
                   await onAddNote(text, author);
                   closeModal();
                 }}

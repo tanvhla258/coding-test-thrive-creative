@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import type { Customer, Ticket, TicketStatus } from "@/types";
 import Modal from "./Modal";
 
@@ -96,7 +97,14 @@ export default function TicketsPane({ customer, tickets, statuses, onAddTicket }
               </button>
               <button
                 onClick={async () => {
-                  if (!subject.trim()) return;
+                  if (!subject.trim()) {
+                    toast.warning("Subject is required");
+                    return;
+                  }
+                  if (!description.trim()) {
+                    toast.warning("Description is required");
+                    return;
+                  }
                   await onAddTicket(subject, description, statusId);
                   closeModal();
                 }}
