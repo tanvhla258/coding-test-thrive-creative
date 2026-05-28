@@ -95,6 +95,56 @@ export default function CustomerNotesCRM({ initialCustomers, initialStatuses }: 
     }
   };
 
+  const handleUpdateNote = async (noteId: string, text: string, author: string) => {
+    if (!selectedCustomer) return;
+    try {
+      const res = await fetch(`/api/customers/${selectedCustomer.id}/notes/${noteId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, author }),
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMessage = errorData.error || `Failed to update note (${res.status})`;
+        toast.error(errorMessage);
+        return;
+      }
+      
+      const json = await res.json();
+      setNotes((prev) => prev.map((n) => (n.id === noteId ? json.data : n)));
+      toast.success("Note updated successfully");
+    } catch (err) {
+      console.error("Failed to update note:", err);
+      toast.error("Network error: Failed to update note");
+    }
+  };
+
+  const handleUpdateTicket = async (ticketId: string, subject: string, description: string, statusId: string) => {
+    if (!selectedCustomer) return;
+    try {
+      const res = await fetch(`/api/customers/${selectedCustomer.id}/tickets/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject, description, statusId }),
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMessage = errorData.error || `Failed to update ticket (${res.status})`;
+        toast.error(errorMessage);
+        return;
+      }
+      
+      const json = await res.json();
+      setTickets((prev) => prev.map((t) => (t.id === ticketId ? json.data : t)));
+      toast.success("Ticket updated successfully");
+    } catch (err) {
+      console.error("Failed to update ticket:", err);
+      toast.error("Network error: Failed to update ticket");
+    }
+  };
+
   return (
     <div className="flex flex-1 overflow-hidden">
       <CustomerList
@@ -110,11 +160,13 @@ export default function CustomerNotesCRM({ initialCustomers, initialStatuses }: 
             tickets={tickets}
             statuses={statuses}
             onAddTicket={handleAddTicket}
+            onUpdateTicket={handleUpdateTicket}
           />
           <NotesPane
             customer={selectedCustomer}
             notes={notes}
             onAddNote={handleAddNote}
+            onUpdateNote={handleUpdateNote}
           />
         </div>
       ) : (
