@@ -24,9 +24,14 @@ export interface TicketStatus {
 export interface Ticket {
   id: string;
   customerId: string;
-  title: string;
-  description: string;
+  subject: string;
+  description: string | null;
   statusId: string;
   createdAt: string;
-  author: string;
+  updatedAt: string;
+  status: {
+    id: string;
+    name: string;
+    color: string;
+  };
 }

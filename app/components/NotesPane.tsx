@@ -7,7 +7,7 @@ import Modal from "./Modal";
 interface Props {
   customer: Customer;
   notes: Note[];
-  onAddNote: (text: string) => Promise<void>;
+  onAddNote: (text: string, author: string) => Promise<void>;
 }
 
 function formatDate(iso: string) {
@@ -71,7 +71,11 @@ export default function NotesPane({ customer, notes, onAddNote }: Props) {
                 Cancel
               </button>
               <button
-                onClick={closeModal}
+                onClick={async () => {
+                  if (!text.trim()) return;
+                  await onAddNote(text, author);
+                  closeModal();
+                }}
                 className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 Save Note

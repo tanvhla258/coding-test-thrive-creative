@@ -1,48 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { Customer } from "@/types";
+import type { Customer, Ticket, TicketStatus } from "@/types";
 import Modal from "./Modal";
-
-interface ShellTicket {
-  id: string;
-  title: string;
-  description: string;
-  status: string;
-  statusColor: string;
-  author: string;
-  createdAt: string;
-}
-
-const SHELL_TICKETS: ShellTicket[] = [
-  {
-    id: "st_1",
-    title: "Shell Ticket — Wire up real data",
-    description: "This is a placeholder ticket. Fetch real tickets from your API and render them here.",
-    status: "Open",
-    statusColor: "blue",
-    author: "Shell User",
-    createdAt: "2024-01-15T10:00:00Z",
-  },
-  {
-    id: "st_2",
-    title: "Another Placeholder Ticket",
-    description: "Replace these shell records with tickets from the database filtered by customerId.",
-    status: "In Progress",
-    statusColor: "yellow",
-    author: "Shell User",
-    createdAt: "2024-01-16T14:30:00Z",
-  },
-  {
-    id: "st_3",
-    title: "Third Example Ticket",
-    description: "Tickets should have a title, description, status, author, and date at minimum.",
-    status: "Resolved",
-    statusColor: "green",
-    author: "Shell User",
-    createdAt: "2024-01-17T09:15:00Z",
-  },
-];
 
 const colorMap: Record<string, string> = {
   blue:   "bg-blue-100 text-blue-700",
@@ -60,21 +20,22 @@ function formatDate(iso: string) {
 
 interface Props {
   customer: Customer;
+  tickets: Ticket[];
+  statuses: TicketStatus[];
+  onAddTicket: (subject: string, description: string, statusId: string) => Promise<void>;
 }
 
-export default function TicketsPane({ customer }: Props) {
+export default function TicketsPane({ customer, tickets, statuses, onAddTicket }: Props) {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
+  const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("Open");
-  const [author, setAuthor] = useState("");
+  const [statusId, setStatusId] = useState(statuses[0]?.id ?? "");
 
   const closeModal = () => {
     setOpen(false);
-    setTitle("");
+    setSubject("");
     setDescription("");
-    setStatus("Open");
-    setAuthor("");
+    setStatusId(statuses[0]?.id ?? "");
   };
 
   return (
@@ -93,11 +54,11 @@ export default function TicketsPane({ customer }: Props) {
         <Modal title="New Ticket" onClose={closeModal}>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Title</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Subject</label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
                 placeholder="Short summary of the issue"
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -112,31 +73,19 @@ export default function TicketsPane({ customer }: Props) {
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option>Open</option>
-                  <option>In Progress</option>
-                  <option>Waiting on Customer</option>
-                  <option>Resolved</option>
-                  <option>Closed</option>
-                </select>
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-gray-700 mb-1">Author</label>
-                <input
-                  type="text"
-                  value={author}
-                  onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="Your name"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+              <select
+                value={statusId}
+                onChange={(e) => setStatusId(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                {statuses.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex justify-end gap-2 pt-1">
               <button
@@ -146,7 +95,11 @@ export default function TicketsPane({ customer }: Props) {
                 Cancel
               </button>
               <button
-                onClick={closeModal}
+                onClick={async () => {
+                  if (!subject.trim()) return;
+                  await onAddTicket(subject, description, statusId);
+                  closeModal();
+                }}
                 className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 Save Ticket
@@ -157,17 +110,16 @@ export default function TicketsPane({ customer }: Props) {
       )}
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {SHELL_TICKETS.map((ticket) => (
+        {tickets.map((ticket) => (
           <div key={ticket.id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
             <div className="flex items-start justify-between gap-2 mb-1">
-              <p className="text-sm font-semibold text-gray-900 leading-snug">{ticket.title}</p>
-              <span className={`flex-shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${colorMap[ticket.statusColor]}`}>
-                {ticket.status}
+              <p className="text-sm font-semibold text-gray-900 leading-snug">{ticket.subject}</p>
+              <span className={`flex-shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${colorMap[ticket.status.color] ?? ""}`}>
+                {ticket.status.name}
               </span>
             </div>
             <p className="text-sm text-gray-500 leading-relaxed mb-3">{ticket.description}</p>
-            <div className="flex items-center justify-between text-xs text-gray-400">
-              <span className="font-medium text-gray-500">{ticket.author}</span>
+            <div className="flex items-center justify-end text-xs text-gray-400">
               <span>{formatDate(ticket.createdAt)}</span>
             </div>
           </div>

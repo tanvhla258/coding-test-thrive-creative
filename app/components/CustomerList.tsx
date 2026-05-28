@@ -18,8 +18,9 @@ const statusBadge: Record<Customer["status"], string> = {
 export default function CustomerList({ customers, selectedId, onSelect }: Props) {
   const [search, setSearch] = useState("");
 
-  // TODO: filter customers by phone number using the search value
-  const filtered = customers;
+  const filtered = customers.filter((c) =>
+    c.phone.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <aside className="w-72 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
@@ -36,8 +37,7 @@ export default function CustomerList({ customers, selectedId, onSelect }: Props)
       <nav className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
           <div className="p-6 text-center text-sm text-gray-400">
-            {/* TODO: show "No customers found" when filter returns nothing */}
-            No customers to display.
+            {search ? "No customers found" : "No customers to display."}
           </div>
         ) : (
           <ul className="divide-y divide-gray-100">
