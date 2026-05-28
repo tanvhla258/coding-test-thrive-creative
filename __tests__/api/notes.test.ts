@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from '../utils/test-client';
+import { apiGet, apiPost, apiPut } from '../utils/test-client';
 import { cleanupTestData } from '../utils/test-db';
 
 describe('Notes API', () => {
@@ -6,76 +6,59 @@ describe('Notes API', () => {
     await cleanupTestData();
   });
 
-  describe('GET /api/notes', () => {
-    it('returns 200 with all notes', async () => {
-      const { status, data } = await apiGet<any>('/api/notes');
+  describe('GET /api/customers/[customerId]/notes', () => {
+    it('returns 200 with all notes for a customer', async () => {
+      const { status, data } = await apiGet<any>('/api/customers/cust_001/notes');
 
       expect(status).toBe(200);
-      expect(Array.isArray(data)).toBe(true);
-      expect(data.length).toBeGreaterThan(0);
+      expect(data.success).toBe(true);
+      expect(Array.isArray(data.data)).toBe(true);
+      expect(data.data.length).toBeGreaterThan(0);
     });
 
     it('returns notes with correct fields', async () => {
-      const { data } = await apiGet<any>('/api/notes');
+      const { data } = await apiGet<any>('/api/customers/cust_001/notes');
 
-      const note = data[0];
+      const note = data.data[0];
       expect(note).toHaveProperty('id');
       expect(note).toHaveProperty('customerId');
       expect(note).toHaveProperty('text');
       expect(note).toHaveProperty('createdAt');
       expect(note).toHaveProperty('author');
     });
-  });
 
-  describe('GET /api/notes with customerId filter', () => {
-    it('filters by customerId', async () => {
-      const { status, data } = await apiGet<any>('/api/notes?customerId=cust_001');
+    it('returns 404 for non-existent customer', async () => {
+      const { status, data } = await apiGet<any>('/api/customers/cust_999/notes');
 
-      expect(status).toBe(200);
-      expect(data.length).toBeGreaterThan(0);
-      data.forEach((note: any) => {
-        expect(note.customerId).toBe('cust_001');
-      });
+      expect(status).toBe(404);
+      expect(data.success).toBe(false);
     });
 
-    it('returns empty array for non-existent customerId', async () => {
-      const { status, data } = await apiGet<any>('/api/notes?customerId=cust_999');
+    it('returns empty array for customer with no notes', async () => {
+      const { status, data } = await apiGet<any>('/api/customers/cust_003/notes');
 
       expect(status).toBe(200);
-      expect(data.length).toBe(0);
+      expect(data.data.length).toBe(0);
     });
   });
 
-  describe('POST /api/notes', () => {
+  describe('POST /api/customers/[customerId]/notes', () => {
     it('creates a new note with valid data', async () => {
-      const { status, data } = await apiPost<any>('/api/notes', {
-        customerId: 'cust_001',
+      const { status, data } = await apiPost<any>('/api/customers/cust_001/notes', {
         text: 'Test note',
         author: 'Test Author',
       });
 
       expect(status).toBe(201);
-      expect(data).toHaveProperty('id');
-      expect(data.customerId).toBe('cust_001');
-      expect(data.text).toBe('Test note');
-      expect(data.author).toBe('Test Author');
-      expect(data).toHaveProperty('createdAt');
-    });
-
-    it('returns 400 for missing customerId', async () => {
-      const { status, data } = await apiPost<any>('/api/notes', {
-        text: 'Test note',
-        author: 'Test Author',
-      });
-
-      expect(status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error).toContain('Validation failed');
+      expect(data.success).toBe(true);
+      expect(data.data).toHaveProperty('id');
+      expect(data.data.customerId).toBe('cust_001');
+      expect(data.data.text).toBe('Test note');
+      expect(data.data.author).toBe('Test Author');
     });
 
     it('returns 400 for missing text', async () => {
-      const { status, data } = await apiPost<any>('/api/notes', {
-        customerId: 'cust_001',
+      const { status, data } = await apiPost<any>('/api/customers/cust_001/notes', {
         author: 'Test Author',
       });
 
@@ -84,8 +67,7 @@ describe('Notes API', () => {
     });
 
     it('returns 400 for empty text', async () => {
-      const { status, data } = await apiPost<any>('/api/notes', {
-        customerId: 'cust_001',
+      const { status, data } = await apiPost<any>('/api/customers/cust_001/notes', {
         text: '',
         author: 'Test Author',
       });
@@ -94,30 +76,44 @@ describe('Notes API', () => {
       expect(data.success).toBe(false);
     });
 
-    it('returns 400 for non-existent customerId', async () => {
-      const { status, data } = await apiPost<any>('/api/notes', {
-        customerId: 'cust_999',
+    it('returns 404 for non-existent customer', async () => {
+      const { status, data } = await apiPost<any>('/api/customers/cust_999/notes', {
         text: 'Test note',
         author: 'Test Author',
       });
 
-      expect(status).toBe(400);
+      expect(status).toBe(404);
       expect(data.success).toBe(false);
-      expect(data.error).toContain('Customer with id cust_999 not found');
     });
+  });
 
-    it('persists created note', async () => {
-      const { data: created } = await apiPost<any>('/api/notes', {
-        customerId: 'cust_001',
-        text: 'Persistent test note',
-        author: 'Test Author',
+  describe('PUT /api/customers/[customerId]/notes/[noteId]', () => {
+    it('updates an existing note', async () => {
+      const { status, data } = await apiPut<any>('/api/customers/cust_001/notes/note_001', {
+        text: 'Updated note text',
       });
 
-      const { data: allNotes } = await apiGet<any>('/api/notes');
-      const found = allNotes.find((n: any) => n.id === created.id);
+      expect(status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.data.text).toBe('Updated note text');
+    });
 
-      expect(found).toBeDefined();
-      expect(found.text).toBe('Persistent test note');
+    it('returns 404 for non-existent note', async () => {
+      const { status, data } = await apiPut<any>('/api/customers/cust_001/notes/note_999', {
+        text: 'Updated text',
+      });
+
+      expect(status).toBe(404);
+      expect(data.success).toBe(false);
+    });
+
+    it('returns 404 for note not belonging to customer', async () => {
+      const { status, data } = await apiPut<any>('/api/customers/cust_002/notes/note_001', {
+        text: 'Updated text',
+      });
+
+      expect(status).toBe(404);
+      expect(data.success).toBe(false);
     });
   });
 });

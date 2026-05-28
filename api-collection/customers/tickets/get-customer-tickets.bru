@@ -1,11 +1,11 @@
 meta {
-  name: Get All Customers
+  name: Get Customer Tickets
   type: http
   seq: 1
 }
 
 get {
-  url: {{baseUrl}}/api/customers
+  url: {{baseUrl}}/api/customers/cust_001/tickets
   body: none
   auth: inherit
 }
@@ -18,10 +18,9 @@ tests {
   test("should return success response", function() {
     expect(res.body).to.have.property("success", true);
     expect(res.body).to.have.property("data");
-    expect(res.body).to.have.property("pagination");
   });
 
-  test("should return an array of customers", function() {
+  test("should return an array of tickets", function() {
     expect(res.body.data).to.be.an("array");
   });
 }

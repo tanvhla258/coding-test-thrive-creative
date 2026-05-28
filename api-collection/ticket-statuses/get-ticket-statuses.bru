@@ -1,11 +1,11 @@
 meta {
-  name: Get All Customers
+  name: Get Ticket Statuses
   type: http
   seq: 1
 }
 
 get {
-  url: {{baseUrl}}/api/customers
+  url: {{baseUrl}}/api/ticket-statuses
   body: none
   auth: inherit
 }
@@ -18,10 +18,10 @@ tests {
   test("should return success response", function() {
     expect(res.body).to.have.property("success", true);
     expect(res.body).to.have.property("data");
-    expect(res.body).to.have.property("pagination");
   });
 
-  test("should return an array of customers", function() {
+  test("should return an array of statuses", function() {
     expect(res.body.data).to.be.an("array");
+    expect(res.body.data.length).to.be.greaterThan(0);
   });
 }

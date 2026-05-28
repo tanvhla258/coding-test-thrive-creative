@@ -1,0 +1,31 @@
+meta {
+  name: Update Customer Note
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/api/customers/cust_001/notes/note_001
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "text": "Updated note text",
+    "author": "Jane Doe"
+  }
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return updated note", function() {
+    expect(res.body.success).to.equal(true);
+    expect(res.body.data).to.have.property("id");
+    expect(res.body.data).to.have.property("text");
+    expect(res.body.data).to.have.property("author");
+  });
+}

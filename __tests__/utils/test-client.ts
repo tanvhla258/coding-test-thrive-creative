@@ -18,3 +18,16 @@ export async function apiPost<T = unknown>(
   const data = await res.json();
   return { status: res.status, data };
 }
+
+export async function apiPut<T = unknown>(
+  path: string,
+  body: unknown
+): Promise<{ status: number; data: T }> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  return { status: res.status, data };
+}

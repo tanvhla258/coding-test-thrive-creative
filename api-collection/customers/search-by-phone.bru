@@ -1,0 +1,29 @@
+meta {
+  name: Search Customers by Phone
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/customers?search=415
+  body: none
+  auth: inherit
+}
+
+params:query {
+  search: 415
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("should return filtered results", function() {
+    expect(res.body.success).to.equal(true);
+    expect(res.body.data).to.be.an("array");
+    res.body.data.forEach(function(customer) {
+      expect(customer.phone).to.include("415");
+    });
+  });
+}
