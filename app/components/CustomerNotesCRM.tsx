@@ -10,15 +10,50 @@ import EmptyState from "./EmptyState";
 
 interface Props {
   initialCustomers: Customer[];
+  initialTotal: number;
   initialStatuses: TicketStatus[];
 }
 
-export default function CustomerNotesCRM({ initialCustomers, initialStatuses }: Props) {
-  const [customers] = useState<Customer[]>(initialCustomers);
+const PAGE_SIZE = 20;
+
+export default function CustomerNotesCRM({ initialCustomers, initialTotal, initialStatuses }: Props) {
+  const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
+  const [total, setTotal] = useState(initialTotal);
+  const [page, setPage] = useState(1);
   const [statuses] = useState<TicketStatus[]>(initialStatuses);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [search, setSearch] = useState("");
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  const fetchCustomers = async (pageNum: number, searchTerm: string) => {
+    try {
+      const params = new URLSearchParams({
+        page: String(pageNum),
+        limit: String(PAGE_SIZE),
+      });
+      if (searchTerm) params.set("search", searchTerm);
+      
+      const res = await fetch(`/api/customers?${params}`);
+      const json = await res.json();
+      setCustomers(json.data);
+      setTotal(json.pagination.total);
+      setPage(pageNum);
+    } catch (err) {
+      console.error("Failed to fetch customers:", err);
+    }
+  };
+
+  const handleSearch = (term: string) => {
+    setSearch(term);
+    fetchCustomers(1, term);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    fetchCustomers(newPage, search);
+  };
 
   useEffect(() => {
     if (!selectedCustomer) {
@@ -151,6 +186,11 @@ export default function CustomerNotesCRM({ initialCustomers, initialStatuses }: 
         customers={customers}
         selectedId={selectedCustomer?.id ?? null}
         onSelect={setSelectedCustomer}
+        search={search}
+        onSearch={handleSearch}
+        page={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
 
       {selectedCustomer ? (

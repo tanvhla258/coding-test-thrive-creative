@@ -2,9 +2,12 @@ import { prisma } from "@/lib/db";
 import type { TicketStatus } from "@/types";
 import CustomerNotesCRM from "./components/CustomerNotesCRM";
 
+const PAGE_SIZE = 20;
+
 export default async function HomePage() {
-  const [customers, statuses] = await Promise.all([
+  const [customers, total, statuses] = await Promise.all([
     prisma.customer.findMany({
+      take: PAGE_SIZE,
       select: {
         id: true,
         name: true,
@@ -15,6 +18,7 @@ export default async function HomePage() {
       },
       orderBy: { createdAt: "desc" },
     }),
+    prisma.customer.count(),
     prisma.ticketStatus.findMany({
       select: {
         id: true,
@@ -36,6 +40,7 @@ export default async function HomePage() {
 
       <CustomerNotesCRM
         initialCustomers={customers}
+        initialTotal={total}
         initialStatuses={statuses}
       />
     </div>
