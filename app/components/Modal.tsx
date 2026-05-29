@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Button from "./Button";
 
 interface Props {
   title: string;
@@ -21,12 +22,9 @@ export default function Modal({ title, onClose, children }: Props) {
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors text-xl leading-none"
-          >
+          <Button variant="icon" onClick={onClose}>
             ×
-          </button>
+          </Button>
         </div>
         <div className="px-6 py-5">{children}</div>
       </div>

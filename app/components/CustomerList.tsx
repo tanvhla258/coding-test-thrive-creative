@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import type { Customer } from "@/types";
+import Button from "./Button";
 
 interface Props {
   customers: Customer[];
   selectedId: string | null;
   onSelect: (customer: Customer) => void;
+  search: string;
+  onSearch: (term: string) => void;
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 const statusBadge: Record<Customer["status"], string> = {
@@ -15,13 +20,7 @@ const statusBadge: Record<Customer["status"], string> = {
   inactive: "bg-gray-100 text-gray-500",
 };
 
-export default function CustomerList({ customers, selectedId, onSelect }: Props) {
-  const [search, setSearch] = useState("");
-
-  const filtered = customers.filter((c) =>
-    c.phone.toLowerCase().includes(search.toLowerCase())
-  );
-
+export default function CustomerList({ customers, selectedId, onSelect, search, onSearch, page, totalPages, onPageChange }: Props) {
   return (
     <aside className="w-72 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
       <div className="p-4 border-b border-gray-200">
@@ -29,19 +28,19 @@ export default function CustomerList({ customers, selectedId, onSelect }: Props)
           type="text"
           placeholder="Search by phone..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => onSearch(e.target.value)}
           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         />
       </div>
 
       <nav className="flex-1 overflow-y-auto">
-        {filtered.length === 0 ? (
+        {customers.length === 0 ? (
           <div className="p-6 text-center text-sm text-gray-400">
             {search ? "No customers found" : "No customers to display."}
           </div>
         ) : (
           <ul className="divide-y divide-gray-100">
-            {filtered.map((c) => (
+            {customers.map((c) => (
               <li key={c.id}>
                 <button
                   onClick={() => onSelect(c)}
@@ -65,6 +64,30 @@ export default function CustomerList({ customers, selectedId, onSelect }: Props)
           </ul>
         )}
       </nav>
+
+      {totalPages > 1 && (
+        <div className="p-3 border-t border-gray-200 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="xs"
+            onClick={() => onPageChange(page - 1)}
+            disabled={page === 1}
+          >
+            ← Prev
+          </Button>
+          <span className="text-xs text-gray-600">
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            variant="ghost"
+            size="xs"
+            onClick={() => onPageChange(page + 1)}
+            disabled={page === totalPages}
+          >
+            Next →
+          </Button>
+        </div>
+      )}
     </aside>
   );
 }
