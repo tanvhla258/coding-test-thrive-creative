@@ -7,10 +7,12 @@ import type { Customer, Note } from "@/types";
 import { CreateNoteSchema, type NoteFormData } from "@/lib/schemas";
 import Modal from "./Modal";
 import Button from "./Button";
+import NoteSkeleton from "./NoteSkeleton";
 
 interface Props {
   customer: Customer;
   notes: Note[];
+  loading?: boolean;
   onAddNote: (text: string, author: string) => Promise<void>;
   onUpdateNote: (noteId: string, text: string, author: string) => Promise<void>;
 }
@@ -22,7 +24,7 @@ function formatDate(iso: string) {
   });
 }
 
-export default function NotesPane({ customer, notes, onAddNote, onUpdateNote }: Props) {
+export default function NotesPane({ customer, notes, loading = false, onAddNote, onUpdateNote }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
 
@@ -112,7 +114,11 @@ export default function NotesPane({ customer, notes, onAddNote, onUpdateNote }: 
       )}
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        {notes.length === 0 ? (
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <NoteSkeleton key={i} />
+          ))
+        ) : notes.length === 0 ? (
           <div className="text-center py-16 text-gray-400">
             <p className="text-4xl mb-3">📝</p>
             <p className="text-sm">No notes yet. Add the first one below.</p>

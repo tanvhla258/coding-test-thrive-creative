@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import type { Customer, Note, Ticket, TicketStatus } from "@/types";
+import { useDebounce } from "@/app/hooks/useDebounce";
 import CustomerList from "./CustomerList";
 import NotesPane from "./NotesPane";
 import TicketsPane from "./TicketsPane";
@@ -25,6 +26,9 @@ export default function CustomerNotesCRM({ initialCustomers, initialTotal, initi
   const [notes, setNotes] = useState<Note[]>([]);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [search, setSearch] = useState("");
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  const debouncedSearch = useDebounce(search, 300);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
@@ -48,12 +52,15 @@ export default function CustomerNotesCRM({ initialCustomers, initialTotal, initi
 
   const handleSearch = (term: string) => {
     setSearch(term);
-    fetchCustomers(1, term);
   };
 
   const handlePageChange = (newPage: number) => {
     fetchCustomers(newPage, search);
   };
+
+  useEffect(() => {
+    fetchCustomers(1, debouncedSearch);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     if (!selectedCustomer) {
@@ -63,6 +70,7 @@ export default function CustomerNotesCRM({ initialCustomers, initialTotal, initi
     }
 
     const fetchData = async () => {
+      setDetailLoading(true);
       try {
         const [notesRes, ticketsRes] = await Promise.all([
           fetch(`/api/customers/${selectedCustomer.id}/notes`),
@@ -74,6 +82,8 @@ export default function CustomerNotesCRM({ initialCustomers, initialTotal, initi
         setTickets(ticketsJson.data);
       } catch (err) {
         console.error("Failed to fetch customer data:", err);
+      } finally {
+        setDetailLoading(false);
       }
     };
 
@@ -199,12 +209,14 @@ export default function CustomerNotesCRM({ initialCustomers, initialTotal, initi
             customer={selectedCustomer}
             tickets={tickets}
             statuses={statuses}
+            loading={detailLoading}
             onAddTicket={handleAddTicket}
             onUpdateTicket={handleUpdateTicket}
           />
           <NotesPane
             customer={selectedCustomer}
             notes={notes}
+            loading={detailLoading}
             onAddNote={handleAddNote}
             onUpdateNote={handleUpdateNote}
           />

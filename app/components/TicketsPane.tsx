@@ -7,6 +7,7 @@ import type { Customer, Ticket, TicketStatus } from "@/types";
 import { CreateTicketSchema, type TicketFormData } from "@/lib/schemas";
 import Modal from "./Modal";
 import Button from "./Button";
+import TicketSkeleton from "./TicketSkeleton";
 
 const colorMap: Record<string, string> = {
   blue:   "bg-blue-100 text-blue-700",
@@ -26,11 +27,12 @@ interface Props {
   customer: Customer;
   tickets: Ticket[];
   statuses: TicketStatus[];
+  loading?: boolean;
   onAddTicket: (subject: string, description: string, statusId: string) => void;
   onUpdateTicket: (ticketId: string, subject: string, description: string, statusId: string) => void;
 }
 
-export default function TicketsPane({ customer, tickets, statuses, onAddTicket, onUpdateTicket }: Props) {
+export default function TicketsPane({ customer, tickets, statuses, loading = false, onAddTicket, onUpdateTicket }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
 
@@ -138,27 +140,33 @@ export default function TicketsPane({ customer, tickets, statuses, onAddTicket, 
       )}
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {tickets.map((ticket) => (
-          <div
-            key={ticket.id}
-            role="button"
-            tabIndex={0}
-            onClick={() => openEdit(ticket)}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEdit(ticket); } }}
-            className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm cursor-pointer transition-all hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <div className="flex items-start justify-between gap-2 mb-1">
-              <p className="text-sm font-semibold text-gray-900 leading-snug">{ticket.subject}</p>
-              <span className={`flex-shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${colorMap[ticket.status.color] ?? ""}`}>
-                {ticket.status.name}
-              </span>
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <TicketSkeleton key={i} />
+          ))
+        ) : (
+          tickets.map((ticket) => (
+            <div
+              key={ticket.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => openEdit(ticket)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEdit(ticket); } }}
+              className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm cursor-pointer transition-all hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <p className="text-sm font-semibold text-gray-900 leading-snug">{ticket.subject}</p>
+                <span className={`flex-shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${colorMap[ticket.status.color] ?? ""}`}>
+                  {ticket.status.name}
+                </span>
+              </div>
+              <p className="text-sm text-gray-500 leading-relaxed mb-3">{ticket.description}</p>
+              <div className="flex items-center justify-end text-xs text-gray-400">
+                <span>{formatDate(ticket.createdAt)}</span>
+              </div>
             </div>
-            <p className="text-sm text-gray-500 leading-relaxed mb-3">{ticket.description}</p>
-            <div className="flex items-center justify-end text-xs text-gray-400">
-              <span>{formatDate(ticket.createdAt)}</span>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </section>
   );
