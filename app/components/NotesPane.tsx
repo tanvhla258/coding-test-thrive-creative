@@ -119,16 +119,18 @@ export default function NotesPane({ customer, notes, onAddNote, onUpdateNote }: 
           </div>
         ) : (
           notes.map((note) => (
-            <div key={note.id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+            <div
+              key={note.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => openEdit(note)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEdit(note); } }}
+              className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm cursor-pointer transition-all hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
               <p className="text-sm text-gray-800 leading-relaxed">{note.text}</p>
               <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
                 <span className="font-medium text-gray-500">{note.author}</span>
-                <div className="flex items-center gap-2">
-                  <span>{formatDate(note.createdAt)}</span>
-                  <Button variant="link" onClick={() => openEdit(note)}>
-                    Edit
-                  </Button>
-                </div>
+                <span>{formatDate(note.createdAt)}</span>
               </div>
             </div>
           ))

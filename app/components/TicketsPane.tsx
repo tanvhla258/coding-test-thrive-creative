@@ -139,7 +139,14 @@ export default function TicketsPane({ customer, tickets, statuses, onAddTicket, 
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {tickets.map((ticket) => (
-          <div key={ticket.id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+          <div
+            key={ticket.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => openEdit(ticket)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEdit(ticket); } }}
+            className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm cursor-pointer transition-all hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
             <div className="flex items-start justify-between gap-2 mb-1">
               <p className="text-sm font-semibold text-gray-900 leading-snug">{ticket.subject}</p>
               <span className={`flex-shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${colorMap[ticket.status.color] ?? ""}`}>
@@ -147,10 +154,7 @@ export default function TicketsPane({ customer, tickets, statuses, onAddTicket, 
               </span>
             </div>
             <p className="text-sm text-gray-500 leading-relaxed mb-3">{ticket.description}</p>
-            <div className="flex items-center justify-between text-xs text-gray-400">
-              <Button variant="link" onClick={() => openEdit(ticket)}>
-                Edit
-              </Button>
+            <div className="flex items-center justify-end text-xs text-gray-400">
               <span>{formatDate(ticket.createdAt)}</span>
             </div>
           </div>
