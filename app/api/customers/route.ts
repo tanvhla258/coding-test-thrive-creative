@@ -73,7 +73,7 @@ export async function POST(request: Request) {
 
     const customer = await prisma.customer.create({
       data: {
-        id: `cust_${Date.now()}`,
+        id: crypto.randomUUID(),
         name,
         phone,
         email,

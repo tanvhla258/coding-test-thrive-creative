@@ -90,7 +90,7 @@ export async function POST(
 
     const ticket = await prisma.ticket.create({
       data: {
-        id: `ticket_${Date.now()}`,
+        id: crypto.randomUUID(),
         customerId,
         subject,
         description: description ?? null,

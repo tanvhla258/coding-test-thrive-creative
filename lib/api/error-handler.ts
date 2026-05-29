@@ -17,6 +17,10 @@ const getStatusCode = (errorType: ErrorType): number => {
   }
 };
 
+const isPrismaError = (error: unknown): boolean => {
+  return error instanceof Error && error.name.startsWith("PrismaClient");
+};
+
 export const handleApiError = (
   error: unknown,
   context?: string
@@ -36,7 +40,9 @@ export const handleApiError = (
     {
       success: false,
       error: message,
-      details: error instanceof Error ? error.stack : undefined,
+      details: process.env.NODE_ENV !== "production" && error instanceof Error
+        ? error.stack
+        : undefined,
     },
     { status: statusCode }
   );
@@ -52,7 +58,8 @@ const classifyError = (error: unknown): ErrorType => {
     }
     if (
       error.message.includes("database") ||
-      error.message.includes("connection")
+      error.message.includes("connection") ||
+      isPrismaError(error)
     ) {
       return "database";
     }
@@ -61,6 +68,10 @@ const classifyError = (error: unknown): ErrorType => {
 };
 
 const getErrorMessage = (error: unknown, errorType: ErrorType): string => {
+  if (error instanceof Error && isPrismaError(error)) {
+    return "Database error";
+  }
+
   if (error instanceof Error) {
     return error.message;
   }

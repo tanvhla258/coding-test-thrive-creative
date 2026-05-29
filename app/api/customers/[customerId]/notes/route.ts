@@ -70,7 +70,7 @@ export async function POST(
 
     const note = await prisma.note.create({
       data: {
-        id: `note_${Date.now()}`,
+        id: crypto.randomUUID(),
         customerId,
         text,
         author,
