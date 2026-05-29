@@ -6,7 +6,7 @@ import type { Customer, Note, Ticket, TicketStatus } from "@/types";
 import CustomerList from "./CustomerList";
 import NotesPane from "./NotesPane";
 import TicketsPane from "./TicketsPane";
-import EmptyState from "./EmptyState";
+
 
 interface Props {
   initialCustomers: Customer[];
@@ -118,7 +118,11 @@ export default function CustomerNotesCRM({ initialCustomers, initialStatuses }: 
           />
         </div>
       ) : (
-        <EmptyState />
+        <main className="flex-1 flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <p className="text-gray-400 text-lg">Select a customer to view details</p>
+          </div>
+        </main>
       )}
     </div>
   );
